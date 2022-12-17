@@ -1,0 +1,241 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="win32">
+      <UniqueIdentifier>{84a8ebd7-7cf0-47f6-b75e-d441df67da40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resource">
+      <UniqueIdentifier>{715254bc-d70b-4ec5-bf29-467dd3ace079}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{bb6c862e-70e9-49d9-81b7-3829a6f50471}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Base">
+      <UniqueIdentifier>{c814856e-496c-47e8-8d40-1bfb64a6dbbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MyTools">
+      <UniqueIdentifier>{f3741f4b-bf05-4a08-9775-b9c6838b4a69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pages">
+      <UniqueIdentifier>{b8d2dc5d-d303-4397-88c4-659a4d38961a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="User">
+      <UniqueIdentifier>{54e66287-65e3-4a67-9d58-8783d0e222bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Base\Elems">
+      <UniqueIdentifier>{90117e14-9aca-4221-a081-a8d28288d3ce}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\AppDelegate.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\ControlManager.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GameDefault.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GameItem.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GameManager.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GameMap.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GameRenderer.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GameSpriteType.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Joystick.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\MainPage.cpp">
+      <Filter>Pages</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\LoadingPage.cpp">
+      <Filter>Pages</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\MyBasicScene.cpp">
+      <Filter>Pages</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\MySchedule.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\TouchesPool.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\ResourcesManager.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\PhysicsShapeCache.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\PhysicsManager.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\MyMath.cpp">
+      <Filter>MyTools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\MapCandle.cpp">
+      <Filter>User</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\MyEnemy0.cpp">
+      <Filter>User</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\test.cpp">
+      <Filter>User</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Bullet.cpp">
+      <Filter>Base\Elems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\basic_GameSprite.cpp">
+      <Filter>Base\Elems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Enemy.cpp">
+      <Filter>Base\Elems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GamePage.cpp">
+      <Filter>Pages</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Random.cpp">
+      <Filter>MyTools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Hero.cpp">
+      <Filter>Base\Elems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Particle.cpp">
+      <Filter>Base\Elems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Weapon.cpp">
+      <Filter>Base\Elems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\EnemyHitPointBar.cpp">
+      <Filter>Base\Elems</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="main.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\AppDelegate.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\ControlManager.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameDefault.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameItem.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameManager.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameMap.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameRenderer.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameSpriteType.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\iVec2.h">
+      <Filter>MyTools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Joystick.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\LoadingPage.h">
+      <Filter>Pages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\MainPage.h">
+      <Filter>Pages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\MyBasicScene.h">
+      <Filter>Pages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\MySchedule.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\TouchesPool.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\ResourcesManager.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\PhysicsShapeCache.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\PhysicsManager.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\MyArray.h">
+      <Filter>MyTools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\MyMath.h">
+      <Filter>MyTools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\MapCandle.h">
+      <Filter>User</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\MyEnemy0.h">
+      <Filter>User</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\MyResourcesDef.h">
+      <Filter>User</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\test.h">
+      <Filter>User</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Bullet.h">
+      <Filter>Base\Elems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\basic_GameSprite.h">
+      <Filter>Base\Elems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Enemy.h">
+      <Filter>Base\Elems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GamePage.h">
+      <Filter>Pages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Random.h">
+      <Filter>MyTools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Hero.h">
+      <Filter>Base\Elems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Particle.h">
+      <Filter>Base\Elems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Weapon.h">
+      <Filter>Base\Elems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\EnemyHitPointBar.h">
+      <Filter>Base\Elems</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="game.rc">
+      <Filter>resource</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Classes\iVec2.inl">
+      <Filter>MyTools</Filter>
+    </None>
+    <None Include="..\Classes\MyArray.inl">
+      <Filter>MyTools</Filter>
+    </None>
+  </ItemGroup>
+</Project>
