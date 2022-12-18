@@ -15,6 +15,11 @@ enum {
     GameMapDirt,
     GameMapRock,
     GameMapCover,
+    Joystick_Move_1,
+    Joystick_Move_2,
+    Joystick_Attack_1,
+    Joystick_Attack_2,
+    Joystick_Disable,
 
     Hero,
     Enemy0,
