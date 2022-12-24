@@ -11,6 +11,7 @@ USING_NS_CC;
 #include <vector>
 
 #include "GameSpriteType.h"
+#include "QuadTree.h"
 #include "iVec2.h"
 
 class basic_GameMapBuilding;
@@ -56,9 +57,6 @@ private:
     static GameManager* instance;
 
 public:
-    using GameSpriteContainer =
-        std::map<GameSpriteType, std::set<basic_GameSprite*>>;
-
     /**
      *在资源加载完成后调用
      *@param 无
@@ -70,12 +68,13 @@ public:
      *由cocos的scheduler每一帧调用,帧渲染之前调用
      *@param dt: 距离上一次调用的间隔时间
      */
-    std::vector<basic_GameSprite*> mainUpdateBeforeRender(float dt);
+    std::pair<QuadCoor /*left top*/, QuadCoor /*right bottom*/>
+    mainUpdateBeforeRender(float dt);
 
     /**
-    *在帧渲染之后调用
-    *@param dt: 距离上一次调用的间隔时间
-    */
+     *在帧渲染之后调用
+     *@param dt: 距离上一次调用的间隔时间
+     */
     void mainUpdateAfterRender(float dt);
 
     /**
@@ -105,7 +104,7 @@ public:
      *@param layerOrder: 渲染层
      *@return 无
      */
-    void addGameSprite(basic_GameSprite* gameObject,
+    void addGameSprite(basic_GameSprite* gameObject, const iVec2& vec,
                        GameRenderOrder layerOrder);
 
     /**
@@ -148,7 +147,7 @@ public:
      *@param 无
      *@return 精灵
      */
-    const GameSpriteContainer& getAllSprites();
+    const Quad<basic_GameSprite*>& getAllSprites();
 
     /**
      *清理
@@ -157,15 +156,15 @@ public:
      */
     virtual void cleanup() override;
 
-    //添加特殊的游戏对象(英雄,控制杆等等)
+    // 添加特殊的游戏对象(英雄,控制杆等等)
 
-    //设置英雄,并自动加入渲染
+    // 设置英雄,并自动加入渲染
     void setHero(basic_Hero* hero);
 
-    //设置移动控制杆,不加入渲染(见"提示1")
-    // void setMoveJoystick(Joystick* joystick);
+    // 设置移动控制杆,不加入渲染(见"提示1")
+    //  void setMoveJoystick(Joystick* joystick);
 
-    //获得英雄
+    // 获得英雄
     basic_Hero* getHero();
 
 private:
@@ -184,33 +183,37 @@ private:
     void updateHeroMove();
 
 private:
-    //一些必要的数据
+    // 一些必要的数据
 
     /////////////////////////////////////////////////////////
 
-    //游戏英雄
+    // 游戏英雄
     basic_Hero* hero = nullptr;
 
 private:
-    //物理管理器
+    // 物理管理器
     PhysicsManager* physicsManager = nullptr;
-    //游戏渲染器
+    // 游戏渲染器
     GameRenderer* gameRenderer = nullptr;
-    //游戏地图
+    // 游戏地图
     GameMap* gameMap = nullptr;
-    //控制器
-    ControlManager* controlManager = nullptr;
-    //游戏是否暂停
-    bool gamePauseState = false;
-    //所有游戏对象
-    GameSpriteContainer gameObjects;
-    //这一帧需要删除的对象
-    std::vector<basic_GameSprite*> needToErase;
-    //这一帧需要添加的对象
-    std::vector<std::pair<basic_GameSprite*, GameRenderOrder>> needToAdd;
 
-    //资源管理器
-    //用户资源
+    // 控制器
+    ControlManager* controlManager = nullptr;
+    // 游戏是否暂停
+    bool gamePauseState = false;
+
+    // 所有游戏对象
+    std::shared_ptr<Quad<basic_GameSprite*>> gameObjects;
+
+    // 这一帧需要删除的对象
+    std::vector<basic_GameSprite*> needToErase;
+    // 这一帧需要添加的对象
+    std::vector<std::tuple<basic_GameSprite*, iVec2, GameRenderOrder>>
+        needToAdd;
+
+    // 资源管理器
+    // 用户资源
     ResourcesManager* userResourcesManager = nullptr;
 };
 

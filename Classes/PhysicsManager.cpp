@@ -9,8 +9,7 @@
 #include "basic_GameSprite.h"
 using namespace std;
 
-PhysicsManager* PhysicsManager::create()
-{
+PhysicsManager* PhysicsManager::create() {
     PhysicsManager* pm = new (std::nothrow) PhysicsManager();
     if (pm && pm->init()) {
         pm->autorelease();
@@ -20,29 +19,28 @@ PhysicsManager* PhysicsManager::create()
     return nullptr;
 }
 
-void PhysicsManager::updatePhysics(const vector<basic_GameSprite*>& gameObjects)
-{
-    const auto call = [&](UINT from, UINT to, UINT) {
-        for (int x = from; x < to; ++x) {
-            auto& sp = gameObjects[x];
+void PhysicsManager::updatePhysics(const QuadCoor& left_top,
+                                   const QuadCoor& right_bottom) {
+    auto instance = GameManager::getInstance();
+    auto& quad = instance->getAllSprites();
+
+    quad.visit_in_rect(
+        left_top, right_bottom, [&](const QuadCoor&, basic_GameSprite* sp) {
             sp->speedVec += sp->accVec;
             if (sp->getPhysicsInfo().contactWithWall) {
                 contactWithWall(sp);
             } else {
                 sp->setPosition(sp->getPosition() + sp->moveVec + sp->speedVec);
             }
-            //移动矢量每次都归零
+            // 移动矢量每次都归零
             sp->moveVec = Vec2::ZERO;
-        }
-    };
-    MyTool::callInThread(gameObjects.size(), call);
+        });
 }
 
-void PhysicsManager::contactWithWall(basic_GameSprite* sprite)
-{
-    //使用精灵的顶点确定在地图上的四个点
+void PhysicsManager::contactWithWall(basic_GameSprite* sprite) {
+    // 使用精灵的顶点确定在地图上的四个点
     auto boundingBox = sprite->getBoundingBox();
-    //人物在地图坐标中的4个顶点
+    // 人物在地图坐标中的4个顶点
     auto gameMap = GameManager::getInstance()->getGameMap();
     auto leftTop = gameMap->convertInMap(
         Vec2(boundingBox.getMinX(), boundingBox.getMaxY()));
@@ -54,11 +52,11 @@ void PhysicsManager::contactWithWall(basic_GameSprite* sprite)
         Vec2(boundingBox.getMaxX(), boundingBox.getMinY()));
 
     auto& speedVec = sprite->speedVec;
-    //重力下落
+    // 重力下落
     if (sprite->getPhysicsInfo().gravityEffect) {
         speedVec.y -= 0.8f;
     }
-    //速度不能过快
+    // 速度不能过快
     constexpr int MAX_SPEED = 35;
     speedVec.x = max<float>(-MAX_SPEED, min<float>(MAX_SPEED, speedVec.x));
     speedVec.y = max<float>(-MAX_SPEED, min<float>(MAX_SPEED, speedVec.y));
@@ -67,10 +65,10 @@ void PhysicsManager::contactWithWall(basic_GameSprite* sprite)
         speedVec, {leftBottom, leftTop, rightBottom, rightTop}, boundingBox);
     sprite->setPosition(sprite->getPosition() + horizonDelta);
 
-    //横向移动完了之后更新一下位置,防止出现穿方块的情况
+    // 横向移动完了之后更新一下位置,防止出现穿方块的情况
     //////////////////////////////////////////////////////////////////////////
     auto boundingBox1 = sprite->getBoundingBox();
-    //人物在地图坐标中的4个顶点
+    // 人物在地图坐标中的4个顶点
     auto leftTop1 = gameMap->convertInMap(
         Vec2(boundingBox1.getMinX(), boundingBox1.getMaxY()));
     auto leftBottom1 = gameMap->convertInMap(
@@ -86,12 +84,12 @@ void PhysicsManager::contactWithWall(basic_GameSprite* sprite)
     sprite->setPosition(sprite->getPosition() + verticalDelta);
 
     const auto checkOnGround = [&]() -> bool {
-        //检查人物是否在地上
-        //先假设不在地面上
+        // 检查人物是否在地上
+        // 先假设不在地面上
         bool onGround = false;
         for (int x = leftBottom.x; x <= rightBottom.x; ++x) {
             auto& tile = gameMap->at(iVec2(x, leftBottom.y - 1));
-            //空气块不算数!
+            // 空气块不算数!
             if (tile.type != GameMapTileType::air) {
                 const float tileY = tile.getRect().getMaxY();
                 const float spY = boundingBox.getMinY();
@@ -107,7 +105,7 @@ void PhysicsManager::contactWithWall(basic_GameSprite* sprite)
 
     auto& info = sprite->getPhysicsInfo();
     info.onGround = checkOnGround();
-    //在地面,计算地面摩擦力
+    // 在地面,计算地面摩擦力
     if (info.onGround) {
         constexpr float m = 0.2f;
         const float N = info.mass * 10;
@@ -125,8 +123,7 @@ Vec2 PhysicsManager::horizonMove(
     Vec2& speedVec,
     const std::tuple<const iVec2&, const iVec2&, const iVec2&, const iVec2&>&
         checkPoint,
-    const Rect& boundingBox)
-{
+    const Rect& boundingBox) {
     if (MyMath::float_equal(0.0f, speedVec.x, 0.01f)) {
         return Vec2(0, 0);
     }
@@ -163,7 +160,7 @@ Vec2 PhysicsManager::horizonMove(
             spX = boundingBox.getMinX();
         }
         float dis = tileX - spX;
-        //多一格像素检测，防止出现小数精度损失所产生的穿墙问题
+        // 多一格像素检测，防止出现小数精度损失所产生的穿墙问题
         if (toggle) {
             dis -= 1;
         } else {
@@ -181,8 +178,7 @@ Vec2 PhysicsManager::verticalMove(
     Vec2& speedVec,
     const std::tuple<const iVec2&, const iVec2&, const iVec2&, const iVec2&>&
         checkPoint,
-    const Rect& boundingBox)
-{
+    const Rect& boundingBox) {
     if (MyMath::float_equal(0.0f, speedVec.y, 0.01f)) {
         return Vec2(0, 0);
     }
@@ -219,7 +215,7 @@ Vec2 PhysicsManager::verticalMove(
             spY = boundingBox.getMinY();
         }
         float dis = tileY - spY;
-        //多一格像素检测，防止出现小数精度损失所产生的穿墙问题
+        // 多一格像素检测，防止出现小数精度损失所产生的穿墙问题
         if (toggle) {
             dis -= 1;
         } else {
@@ -233,9 +229,8 @@ Vec2 PhysicsManager::verticalMove(
     return moveDelta;
 }
 
-bool PhysicsManager::init()
-{
-    //初始化碰撞检测
+bool PhysicsManager::init() {
+    // 初始化碰撞检测
     auto conatctListener = EventListenerPhysicsContact::create();
 
     conatctListener->onContactBegin = [&](PhysicsContact& conatct) -> bool {
@@ -255,12 +250,11 @@ bool PhysicsManager::init()
     return true;
 }
 
-void PhysicsManager::processContact(PhysicsContact& conatct)
-{
+void PhysicsManager::processContact(PhysicsContact& conatct) {
     auto const shapeA = conatct.getShapeA();
     auto const shapeB = conatct.getShapeB();
 
-    //游戏中所有的含有碰撞的物体必须继承自base_GameObject
+    // 游戏中所有的含有碰撞的物体必须继承自base_GameObject
     auto objectA =
         dynamic_cast<basic_GameSprite*>(shapeA->getBody()->getNode());
     auto objectB =

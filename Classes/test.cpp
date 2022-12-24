@@ -1,14 +1,14 @@
 #include "test.h"
 
 #include "GameManager.h"
+#include "GameMap.h"
 #include "MyMath.h"
 #include "MyResourcesDef.h"
 #include "Random.h"
 #include "ResourcesManager.h"
 
 TestHero* TestHero::create(const string& hero, const string& center,
-                           const string& out)
-{
+                           const string& out) {
     auto h = new (std::nothrow) TestHero();
     if (h && h->initGameSprite(hero, center, out)) {
         h->autorelease();
@@ -19,8 +19,7 @@ TestHero* TestHero::create(const string& hero, const string& center,
 }
 
 bool TestHero::initGameSprite(const string& hero, const string& center,
-                              const string& out)
-{
+                              const string& out) {
     this->cocosSchedule([&](float) { this->_update(); }, "__update");
     basic_Hero::initGameSprite();
     this->center = Sprite::createWithSpriteFrameName(center);
@@ -31,13 +30,11 @@ bool TestHero::initGameSprite(const string& hero, const string& center,
     return this->initWithSpriteFrameName(hero);
 }
 
-void TestHero::onContact(basic_GameSprite* contactTarget)
-{
+void TestHero::onContact(basic_GameSprite* contactTarget) {
     basic_Hero::onContact(contactTarget);
 }
 
-void TestHero::_update()
-{
+void TestHero::_update() {
     auto lights = getAllLightSprites();
     for (auto& it : lights) {
         it.second->setPosition(this->getPosition());
@@ -48,8 +45,7 @@ void TestHero::_update()
 
 void TestHero::attackNear(const Vec2& pos) {}
 
-void TestHero::attackFar(const Vec2& pos, float holdTime)
-{
+void TestHero::attackFar(const Vec2& pos, float holdTime) {
     auto& ib = this->getItemBag();
     auto& im = ib.getAllItems();
     for (auto& item : im) {
@@ -62,8 +58,7 @@ void TestHero::attackFar(const Vec2& pos, float holdTime)
     }
 }
 
-TestItemSprite* TestItemSprite::create(const std::string& p)
-{
+TestItemSprite* TestItemSprite::create(const std::string& p) {
     auto item = new (std::nothrow) TestItemSprite();
     if (item && item->initGameSprite(p)) {
         item->autorelease();
@@ -73,25 +68,21 @@ TestItemSprite* TestItemSprite::create(const std::string& p)
     return nullptr;
 }
 
-bool TestItemSprite::initGameSprite(const std::string& p)
-{
+bool TestItemSprite::initGameSprite(const std::string& p) {
     basic_GameItemSprite::initGameSprite();
     return this->initWithSpriteFrameName(p);
 }
 
-void TestItemSprite::kill()
-{
+void TestItemSprite::kill() {
     GameManager::getInstance()->removeGameSprite(this);
 }
 
-void TestItemSprite::itemPickedUp(basic_Hero* hero)
-{
+void TestItemSprite::itemPickedUp(basic_Hero* hero) {
     hero->getItemBag().addItem(new TestWeapon());
     this->kill();
 }
 
-HeroBullet* HeroBullet::create(const string& p)
-{
+HeroBullet* HeroBullet::create(const string& p) {
     auto bu = new (std::nothrow) HeroBullet();
     if (bu && bu->initGameSprite(p)) {
         bu->autorelease();
@@ -101,22 +92,19 @@ HeroBullet* HeroBullet::create(const string& p)
     return nullptr;
 }
 
-bool HeroBullet::initGameSprite(const string& p)
-{
+bool HeroBullet::initGameSprite(const string& p) {
     basic_Bullet::initGameSprite();
     return this->initWithSpriteFrameName(p);
 }
 
 void HeroBullet::delayShoot(const Vec2& startPosition, const Vec2& to,
-                            float time)
-{
+                            float time) {
     this->cocosScheduleOnce(
         [this, startPosition, to](float) { shoot(startPosition, to); }, time,
         "delayShoot");
 }
 
-void HeroBullet::shoot(const Vec2& startPosition, const Vec2& to)
-{
+void HeroBullet::shoot(const Vec2& startPosition, const Vec2& to) {
     this->setPosition(startPosition);
     deltaPos = MyMath::getPosOnLine(Vec2(0, 0), to - startPosition, 40);
     this->speedVec = deltaPos;
@@ -125,8 +113,7 @@ void HeroBullet::shoot(const Vec2& startPosition, const Vec2& to)
     this->cocosSchedule([&](float) { this->update1(); }, "moveUpdate");
 }
 
-void HeroBullet::update1()
-{
+void HeroBullet::update1() {
     this->setRotation(MyMath::getRotation(Vec2(0, 0), speedVec));
     auto& sps = this->getAllLightSprites();
     for (auto& it : sps) {
@@ -145,17 +132,18 @@ void HeroBullet::update1()
     }
 }
 
-void HeroBullet::kill()
-{
+void HeroBullet::kill() {
     auto gm = GameManager::getInstance();
     auto rm = gm->getResourcesManager();
-    //创建粒子
+    // 创建粒子
     for (int x = 0; x < 6; ++x) {
         auto par = basic_Particle::create(
             rm->getSpriteFrames(ResKey::SpFrame::Particle)[0], 0.1f, 2, 20);
         par->setPosition(this->getPosition());
         par->setScale(0.5f);
-        gm->addGameSprite(par, GameRenderOrder::user0);
+
+        auto p = gm->getGameMap()->convertInMap(par->getPosition());
+        gm->addGameSprite(par, p, GameRenderOrder::user0);
     }
 
     auto li = this->getAllLightSprites();
@@ -178,8 +166,7 @@ void HeroBullet::kill()
         0.3f, "__delayKill");
 }
 
-void HeroBullet::onContact(basic_GameSprite* contactTarget)
-{
+void HeroBullet::onContact(basic_GameSprite* contactTarget) {
     auto type = contactTarget->getGameSpriteType();
     if ((type.type0 == GameSpriteType::Type0::mapTile ||
          type.type0 == GameSpriteType::Type0::enemy) &&
@@ -189,14 +176,12 @@ void HeroBullet::onContact(basic_GameSprite* contactTarget)
     }
 }
 
-GameSpriteType HeroBullet::getGameSpriteType()
-{
+GameSpriteType HeroBullet::getGameSpriteType() {
     return {GameSpriteType::Type0::bullet, GameSpriteType::Type1::heroBullet};
 }
 
 void TestWeapon::useItem(basic_GameSprite* gameSprite, const Vec2& from,
-                         const Vec2& to, float holdTime)
-{
+                         const Vec2& to, float holdTime) {
     int i = 1 + max<float>(0, holdTime - 0.5f) / 0.1f;
     i = min(4, i);
     for (int x = 0; x < i; ++x) {
@@ -223,6 +208,8 @@ void TestWeapon::useItem(basic_GameSprite* gameSprite, const Vec2& from,
         rand_float r(-50, 50);
         bullet->shoot(from, to + Vec2(r(), r()) * min(i, 3));
 
-        gameMan->addGameSprite(bullet, GameRenderOrder::user0);
+        auto gm = GameManager::getInstance();
+        auto p = gm->getGameMap()->convertInMap(bullet->getPosition());
+        gameMan->addGameSprite(bullet, p, GameRenderOrder::user0);
     }
 }

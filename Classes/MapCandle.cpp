@@ -1,6 +1,7 @@
 #include "MapCandle.h"
 
 #include "GameManager.h"
+#include "GameMap.h"
 #include "GameRenderer.h"
 #include "Hero.h"
 #include "MyMath.h"
@@ -9,8 +10,7 @@
 
 MapCandle* MapCandle::create(const string& frame, const string& star,
                              const string& par, const string& candleLight,
-                             const string& starLight)
-{
+                             const string& starLight) {
     auto c = new (std::nothrow) MapCandle();
     if (c && c->initGameSprite(frame, star, par, candleLight, starLight)) {
         c->autorelease();
@@ -22,8 +22,7 @@ MapCandle* MapCandle::create(const string& frame, const string& star,
 
 bool MapCandle::initGameSprite(const string& frame, const string& star,
                                const string& par, const string& candleLight,
-                               const string& starLight)
-{
+                               const string& starLight) {
     starFrame = star;
     particle = par;
     this->starLight = starLight;
@@ -40,8 +39,7 @@ bool MapCandle::initGameSprite(const string& frame, const string& star,
 
 void MapCandle::removeStar(CandleStar* star) { needToErase.push_back(star); }
 
-void MapCandle::_update()
-{
+void MapCandle::_update() {
     auto gm = GameManager::getInstance();
     auto hero = gm->getHero();
     float d1 = MyMath::distance(hero->getPosition(), getPosition());
@@ -65,8 +63,7 @@ void MapCandle::_update()
     sp->setPosition(getPosition());
 }
 
-void MapCandle::createStar()
-{
+void MapCandle::createStar() {
     auto s = CandleStar::create(this, starFrame, starLight, particle);
 
     rand_float r0(4, 4.5f);
@@ -84,23 +81,26 @@ void MapCandle::createStar()
 
     auto gm = GameManager::getInstance();
     auto gr = gm->getGameRenderer();
-    gm->addGameSprite(s, GameRenderOrder::user0);
+
+    auto p = gm->getGameMap()->convertInMap(s->getPosition());
+    gm->addGameSprite(s, p, GameRenderOrder::user0);
     stars.insert(s);
 
-    //创建粒子
+    // 创建粒子
     if (gr->isInCamera(getPosition())) {
         for (int x = 0; x < 5; ++x) {
             auto p = basic_Particle::create(particle, 0.1f, 5, 25);
             p->setScale(0.5f);
             p->setPosition(getPosition());
-            gm->addGameSprite(p, GameRenderOrder::user0);
+
+            auto pp = gm->getGameMap()->convertInMap(p->getPosition());
+            gm->addGameSprite(p, pp, GameRenderOrder::user0);
         }
     }
 }
 
 CandleStar* CandleStar::create(MapCandle* candle, const string& frame,
-                               const string& light, const string& par)
-{
+                               const string& light, const string& par) {
     auto s = new (std::nothrow) CandleStar();
     if (s && s->initGameSprite(candle, frame, light, par)) {
         s->autorelease();
@@ -111,8 +111,7 @@ CandleStar* CandleStar::create(MapCandle* candle, const string& frame,
 }
 
 bool CandleStar::initGameSprite(MapCandle* candle, const string& frame,
-                                const string& light, const string& par)
-{
+                                const string& light, const string& par) {
     this->candle = candle;
     particle = par;
 
@@ -138,8 +137,7 @@ bool CandleStar::initGameSprite(MapCandle* candle, const string& frame,
     return this->initWithSpriteFrameName(frame);
 }
 
-void CandleStar::_update()
-{
+void CandleStar::_update() {
     auto center = candle->getPosition();
     auto myPos = getPosition();
     const float mass = 2000;
@@ -157,8 +155,7 @@ void CandleStar::_update()
     sp->setPosition(getPosition());
 }
 
-void CandleStar::createPar()
-{
+void CandleStar::createPar() {
     auto gm = GameManager::getInstance();
     auto gr = gm->getGameRenderer();
     if (!gr->isInCamera(getPosition())) {
@@ -167,13 +164,14 @@ void CandleStar::createPar()
     auto p = basic_Particle::create(particle, 0.2f, 0.5f, 15);
     p->setScale(0.3f);
     p->setPosition(getPosition());
-    gm->addGameSprite(p, GameRenderOrder::user0);
+
+    auto pp = gm->getGameMap()->convertInMap(p->getPosition());
+    gm->addGameSprite(p, pp, GameRenderOrder::user0);
 }
 
 bool CandleStar::canKill() { return _canKill; }
 
-void CandleStar::kill()
-{
+void CandleStar::kill() {
     auto gm = GameManager::getInstance();
     candle->removeStar(this);
 

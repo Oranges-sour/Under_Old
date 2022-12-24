@@ -8,22 +8,23 @@ USING_NS_CC;
 #include <vector>
 
 #include "GameSpriteType.h"
+#include "QuadTree.h"
 
 class basic_GameSprite;
 
-//一个帧动"包"
+// 一个帧动"包"
 struct ShakeBag {
-    //倾斜角度
+    // 倾斜角度
     float angle = 0;
-    //持续时间
+    // 持续时间
     float time = 0;
-    //振幅
+    // 振幅
     float amplitude = 0;
-    //每次减少的振幅
+    // 每次减少的振幅
     float delta = 0;
 };
 
-//游戏渲染器
+// 游戏渲染器
 class GameRenderer final : public Node {
 public:
     static GameRenderer* create();
@@ -54,7 +55,7 @@ public:
      *@param 略
      *@return 无
      */
-    void _update(const std::vector<basic_GameSprite*>& gameObjects,
+    void _update(const QuadCoor& left_top, const QuadCoor& right_bottom,
                  const Vec2& heroPosition, const Vec2& mousePosition);
 
     /**
@@ -62,7 +63,8 @@ public:
      *@param gameObjects:所有在游戏中的对象.将由此类进行光源判断
      *@return 无
      */
-    SpriteFrame* updateLight(const std::vector<basic_GameSprite*>& gameObjects);
+    SpriteFrame* updateLight(const QuadCoor& left_top,
+                             const QuadCoor& right_bottom);
 
     /**
      *更新摄像机帧动
@@ -132,11 +134,11 @@ private:
 
     RenderTexture* lightRenderTexture = nullptr;
 
-    //向屏幕显示图片的精灵
+    // 向屏幕显示图片的精灵
     Sprite* lightDraw = nullptr;
     Node* objectRenderer = nullptr;
     Node* finalDraw = nullptr;
-    //相机真正需要到达的坐标
+    // 相机真正需要到达的坐标
     Vec2 cameraPosNeed;
 };
 

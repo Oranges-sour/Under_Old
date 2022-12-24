@@ -224,6 +224,9 @@
     <ClInclude Include="..\Classes\EnemyHitPointBar.h">
       <Filter>Base\Elems</Filter>
     </ClInclude>
+    <ClInclude Include="..\Classes\QuadTree.h">
+      <Filter>MyTools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="game.rc">

@@ -8,6 +8,7 @@ USING_NS_CC;
 #include <vector>
 
 #include "iVec2.h"
+#include "QuadTree.h"
 
 class basic_GameSprite;
 
@@ -25,7 +26,7 @@ public:
      *@param gameObjects:所有在游戏中的对象.将由此类进行判断.
      *@return 无
      */
-    void updatePhysics(const std::vector<basic_GameSprite*>& gameObjects);
+    void updatePhysics(const QuadCoor& left_top,const QuadCoor& right_bottom);
 
 private:
     /**

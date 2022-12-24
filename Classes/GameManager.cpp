@@ -25,9 +25,8 @@ using namespace std;
 
 GameManager* GameManager::instance = nullptr;
 
-void GameManager::createInstance()
-{
-    //创建实例时,当前的实例指针应该为空!
+void GameManager::createInstance() {
+    // 创建实例时,当前的实例指针应该为空!
     CC_ASSERT(instance == nullptr);
     instance = new (std::nothrow) GameManager();
     if (instance && instance->init()) {
@@ -37,9 +36,8 @@ void GameManager::createInstance()
     CC_SAFE_DELETE(instance);
 }
 
-void GameManager::destroyInstance()
-{
-    //实例不应为空!
+void GameManager::destroyInstance() {
+    // 实例不应为空!
     CC_ASSERT(instance != nullptr);
     instance->removeFromParent();
     instance = nullptr;
@@ -47,16 +45,18 @@ void GameManager::destroyInstance()
 
 GameManager* GameManager::getInstance() { return instance; }
 
-void GameManager::initManager()
-{
-    //初始化渲染器
+void GameManager::initManager() {
+    // 初始化渲染器
     gameRenderer = GameRenderer::create();
-    //初始化地图
+    // 初始化地图
     gameMap = GameMap::create();
-    //初始化物理管理器
+    // 初始化物理管理器
     physicsManager = PhysicsManager::create();
-    //初始化控制器
+    // 初始化控制器
     controlManager = ControlManager::create();
+
+    gameObjects = make_shared<Quad<basic_GameSprite*>>(QuadCoor{0, 512},
+                                                       QuadCoor{512, 0});
 
     this->addChild(physicsManager, 1);
     this->addChild(gameRenderer, 2);
@@ -64,7 +64,7 @@ void GameManager::initManager()
 
     gameRenderer->addNode(gameMap, static_cast<int>(GameRenderOrder::map));
     gameRenderer->setVisible(false);
-    //启动主循环
+    // 启动主循环
     this->schedule(
         [&](float dt) {
             if (!gameMap->isInitFinish()) {
@@ -72,123 +72,110 @@ void GameManager::initManager()
             } else {
                 gameRenderer->setVisible(true);
             }
-            auto vsp = std::move(this->mainUpdateBeforeRender(dt));
-            this->gameRenderer->_update(vsp, hero->getPosition(),
+            auto p = std::move(this->mainUpdateBeforeRender(dt));
+            this->gameRenderer->_update(p.first, p.second, hero->getPosition(),
                                         controlManager->getMousePosition());
             this->mainUpdateAfterRender(dt);
         },
         /*一帧运行一次*/ 0, "mainUpdate");
 }
 
-vector<basic_GameSprite*> GameManager::mainUpdateBeforeRender(float dt)
-{
-    vector<basic_GameSprite*> vsp;
-    //填入vec
-    for (auto iter = gameObjects.begin(); iter != gameObjects.end(); ++iter) {
-        auto& s = iter->second;
-        for (auto i = s.begin(); i != s.end(); ++i) {
-            auto& sp = *i;
-            vsp.push_back(sp);
-        }
+std::pair<QuadCoor /*left top*/, QuadCoor /*right bottom*/>
+GameManager::mainUpdateBeforeRender(float dt) {
+    auto hero_p = hero->getPosition();
+    auto hero_p1 = gameMap->convertInMap(hero_p);
+
+    auto left_top = QuadCoor{hero_p1.x - 5, hero_p1.y + 5};
+    auto right_bottom = QuadCoor{hero_p1.x + 5, hero_p1.y - 5};
+
+    vector<basic_GameSprite*> vec;
+
+    gameObjects->visit_in_rect(left_top, right_bottom,
+                               [&](const QuadCoor& cor, basic_GameSprite* sp) {
+                                   vec.push_back(sp);
+
+                                   sp->cocosScheduleUpdate(dt);
+                                   sp->logicScheduleUpdate(dt);
+                               });
+
+    if (hero->quad_node.p.first == true) {
+        vec.push_back(hero);
     }
 
-    // cocos线程更新
-    for (auto iter = vsp.begin(); iter != vsp.end(); ++iter) {
-        auto& sp = *iter;
-        sp->cocosScheduleUpdate(dt);
-    }
+    for (auto& sp : vec) {
+        auto p = sp->getPosition();
+        auto p1 = gameMap->convertInMap(p);
+        auto pp = sp->quad_node;
+        auto p2 = iVec2(pp.cor.x, pp.cor.y);
 
-    // logic线程更新
-    MyTool::callInThread(vsp.size(), [&](UINT from, UINT to, UINT) {
-        for (UINT x = from; x < to; ++x) {
-            vsp[x]->logicScheduleUpdate(dt);
+        if (p1 != p2) {
+            pp.con->remove(pp.p.second);
+            sp->quad_node = gameObjects->insert({p1.x, p1.y}, sp);
         }
-    });
+    }
 
     this->updateHeroMove();
-    physicsManager->updatePhysics(vsp);
-    gameMap->_update();
+    physicsManager->updatePhysics(left_top, right_bottom);
+    gameMap->_update(left_top, right_bottom);
 
-    return std::move(vsp);
+    return {left_top, right_bottom};
 }
 
-void GameManager::mainUpdateAfterRender(float dt)
-{
-    //添加新的精灵
+void GameManager::mainUpdateAfterRender(float dt) {
+    // 添加新的精灵
     for (auto iter = needToAdd.begin(); iter != needToAdd.end(); ++iter) {
-        auto& sp = iter->first;
+        auto& sp = get<0>(*iter);
         auto& type = sp->getGameSpriteType();
 
-        auto i = gameObjects.find(type);
-        if (i == gameObjects.end()) {
-            gameObjects.insert(make_pair(type, set<basic_GameSprite*>({sp})));
-        } else {
-            i->second.insert(sp);
-        }
-        gameRenderer->addNode(sp, static_cast<int>(iter->second));
-        //添加的时候retain了一次,现在release掉
+        auto p = get<1>(*iter);
+        auto r = gameObjects->insert({p.x, p.y}, sp);
+        sp->quad_node = r;
+
+        gameRenderer->addNode(sp, static_cast<int>(get<2>(*iter)));
+        // 添加的时候retain了一次,现在release掉
         sp->release();
     }
     needToAdd.clear();
 
-    //移除精灵
+    // 移除精灵
     for (auto iter = needToErase.begin(); iter != needToErase.end(); ++iter) {
         auto& sp = *iter;
-        auto& type = sp->getGameSpriteType();
-
-        auto i = gameObjects.find(type);
-        if (i != gameObjects.end()) {
-            i->second.erase(sp);
+        if (sp->quad_node.p.first) {
+            sp->quad_node.con->remove(sp->quad_node.p.second);
         }
+
         sp->removeFromParent();
     }
     needToErase.clear();
 }
 
-void GameManager::pauseGame()
-{
-    for (auto iter = gameObjects.begin(); iter != gameObjects.end(); ++iter) {
-        auto& s = iter->second;
-        for (auto i = s.begin(); i != s.end(); ++i) {
-            (*i)->pause();
-        }
-    }
+void GameManager::pauseGame() {
     gamePauseState = true;
 }
 
-void GameManager::resumeGame()
-{
-    for (auto iter = gameObjects.begin(); iter != gameObjects.end(); ++iter) {
-        auto& s = iter->second;
-        for (auto i = s.begin(); i != s.end(); ++i) {
-            (*i)->resume();
-        }
-    }
+void GameManager::resumeGame() {
     gamePauseState = false;
 }
 
 bool GameManager::isGamePause() { return gamePauseState; }
 
-void GameManager::addGameSprite(basic_GameSprite* gameObject,
-                                GameRenderOrder layerOrder)
-{
+void GameManager::addGameSprite(basic_GameSprite* gameObject, const iVec2& vec,
+                                GameRenderOrder layerOrder) {
     gameObject->retain();
-    needToAdd.push_back(make_pair(gameObject, layerOrder));
+    needToAdd.push_back(tuple<basic_GameSprite*, iVec2, GameRenderOrder>(
+        gameObject, vec, layerOrder));
 }
 
-void GameManager::addNode(Node* node, GameRenderOrder layerOrder)
-{
+void GameManager::addNode(Node* node, GameRenderOrder layerOrder) {
     gameRenderer->addNode(node, static_cast<int>(layerOrder));
 }
 
-void GameManager::removeGameSprite(basic_GameSprite* gameObject)
-{
+void GameManager::removeGameSprite(basic_GameSprite* gameObject) {
     auto iter = std::find(needToErase.begin(), needToErase.end(), gameObject);
     if (iter == needToErase.end()) needToErase.push_back(gameObject);
 }
 
-ResourcesManager* GameManager::getResourcesManager()
-{
+ResourcesManager* GameManager::getResourcesManager() {
     return userResourcesManager;
 }
 
@@ -196,33 +183,28 @@ GameRenderer* GameManager::getGameRenderer() { return gameRenderer; }
 
 GameMap* GameManager::getGameMap() { return gameMap; }
 
-const GameManager::GameSpriteContainer& GameManager::getAllSprites()
-{
-    return gameObjects;
+const Quad<basic_GameSprite*>& GameManager::getAllSprites() {
+    return *gameObjects;
 }
 
-void GameManager::cleanup()
-{
+void GameManager::cleanup() {
     delete userResourcesManager;
     Node::cleanup();
 }
 
-void GameManager::setHero(basic_Hero* hero)
-{
+void GameManager::setHero(basic_Hero* hero) {
     this->hero = hero;
-    this->addGameSprite(hero, GameRenderOrder::user0);
+    this->addGameSprite(hero, {0, 0}, GameRenderOrder::user0);
 }
 
 basic_Hero* GameManager::getHero() { return hero; }
 
-bool GameManager::init()
-{
+bool GameManager::init() {
     userResourcesManager = new ResourcesManager();
     return true;
 }
 
-void GameManager::updateHeroMove()
-{
+void GameManager::updateHeroMove() {
     auto& moveVec = controlManager->getMoveVec();
     auto& speedVec = hero->speedVec;
     speedVec.x = moveVec.x * 10;

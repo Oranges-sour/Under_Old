@@ -208,7 +208,7 @@ public:
      *@param 无
      *@return 无
      */
-    void _update();
+    void _update(const QuadCoor& left_top, const QuadCoor& right_bottom);
 
     /**
      *获得地图中的所有建筑物
@@ -251,7 +251,8 @@ private:
      *@param 无
      *@return 无
      */
-    void updatePhysicsTile();
+    void updatePhysicsTile(const QuadCoor& left_top,
+                           const QuadCoor& right_bottom);
 
     // 地图材质块
     using TileTextureBlock = std::pair<Sprite*, std::array<Sprite*, 4>>;

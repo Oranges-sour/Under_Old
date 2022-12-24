@@ -14,6 +14,7 @@ class GameMapTile;
 #include <vector>
 
 #include "GameSpriteType.h"
+#include "QuadTree.h"
 
 struct GameSpritePhysicsInfo {
     //物体的形状以及碰撞(PhysicsEditor中的数据)
@@ -189,6 +190,8 @@ public:
     Vec2 speedVec;
     //加速度,每一帧加速度都会影响速度
     Vec2 accVec;
+
+    Quad_node<basic_GameSprite*> quad_node;
 
 private:
     // buff的种类与时间的映射表

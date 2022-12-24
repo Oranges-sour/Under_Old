@@ -35,7 +35,7 @@ bool GamePage::init(bool isGameScene) {
 
     auto phyw = this->getPhysicsWorld();
     phyw->setGravity(Vec2::ZERO);
-    // phyw->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+    //phyw->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
     phyw->setUpdateRate(1.0);
 
     auto layer0 = GamePageLayer0::create();
@@ -156,7 +156,8 @@ void GamePageLayer0::addEnemy() {
         info.physicsShape = rm->getPhysicsBody(ResKey::Physics::Enemy0);
         e->setPhysicsInfo(info);
 
-        gm->addGameSprite(e, GameRenderOrder::user0);
+        auto pp = gm->getGameMap()->convertInMap(e->getPosition());
+        gm->addGameSprite(e, pp, GameRenderOrder::user0);
     }
 }
 
@@ -190,17 +191,17 @@ void GamePageLayer0::gameInit() {
     }
 
     // ¥¥Ω®¿Ø÷Ú
-    for (int y = 0; y < 20; ++y) {
-        rand_int r0(0, 250);
-        Vec2 pos = gameMap->convertInPixel(iVec2(r0(), r0())).first;
+    /* for (int y = 0; y < 20; ++y) {
+         rand_int r0(0, 250);
+         Vec2 pos = gameMap->convertInPixel(iVec2(r0(), r0())).first;
 
-        auto frames0 = rm->getSpriteFrames(ResKey::SpFrame::MapCandle);
-        auto frames1 = rm->getSpriteFrames(ResKey::SpFrame::Particle);
-        auto c = MapCandle::create(frames0[0], frames0[1], frames1[0],
-                                   frames0[2], frames0[2]);
-        c->setPosition(pos);
-        gameManager->addGameSprite(c, GameRenderOrder::user0);
-    }
+         auto frames0 = rm->getSpriteFrames(ResKey::SpFrame::MapCandle);
+         auto frames1 = rm->getSpriteFrames(ResKey::SpFrame::Particle);
+         auto c = MapCandle::create(frames0[0], frames0[1], frames1[0],
+                                    frames0[2], frames0[2]);
+         c->setPosition(pos);
+         gameManager->addGameSprite(c, GameRenderOrder::user0);
+     }*/
 
     // ”Œœ∑±≥æ∞
     this->mapBk = Sprite::create("mapBk.png");
@@ -239,17 +240,16 @@ void GamePageLayer0::initRes() {
          "game_map_tile_cover2.png", "game_map_tile_cover3.png"},
         ResKey::SpFrame::GameMapCover);
     ////////////////////////////////
-    //º”‘ÿ¥•øÿ∏À
-
+    // º”‘ÿ¥•øÿ∏À
 
     // ”¢–€◊ ‘¥
-    rm->addSpriteFrames({"hero_0.png", "hero_center.png", "hero_out.png"},
+    rm->addSpriteFrames({"hero_0.png", "hero_0.png", "hero_0.png"},
                         ResKey::SpFrame::Hero);
     rm->addSpriteFrames({"hero_bullet.png"}, ResKey::SpFrame::HeroBullet);
     rm->addSpriteFrames({"item_0.png"}, ResKey::SpFrame::Item0);
 
     // µ–»À◊ ‘¥
-    rm->addSpriteFrames({"enemy_0.png", "enemy_bullet.png"},
+    rm->addSpriteFrames({"enemy_0.png", "enemy_bullet_0.png"},
                         ResKey::SpFrame::Enemy0);
 
     // ¿Ø÷Ú
@@ -261,11 +261,11 @@ void GamePageLayer0::initRes() {
 
     rm->addPhysicsShapes("physics_test.plist");
     rm->addPhysicsBody("enemy_0", ResKey::Physics::Enemy0);
-    rm->addPhysicsBody("enemy_bullet", ResKey::Physics::Enemy0Bullet);
+    rm->addPhysicsBody("enemy_bullet_0", ResKey::Physics::Enemy0Bullet);
     rm->addPhysicsBody("gameMapTile", ResKey::Physics::GameMapTile);
     rm->addPhysicsBody("hero_0", ResKey::Physics::Hero);
     rm->addPhysicsBody("item_0", ResKey::Physics::Item0);
-    rm->addPhysicsBody("hero_bullet", ResKey::Physics::HeroBullet);
+    rm->addPhysicsBody("bullet_0", ResKey::Physics::HeroBullet);
 
     rm->addTexture("mapBk.png", ResKey::GAME_MAP_BACK_GROUND);
 }
@@ -324,7 +324,9 @@ void GamePageLayer0::init0() {
 
         info.physicsShape = rm->getPhysicsBody(ResKey::Physics::Item0);
         t_item->setPhysicsInfo(info);
-        gm->addGameSprite(t_item, GameRenderOrder::user1);
+
+        auto pp = gm->getGameMap()->convertInMap(t_item->getPosition());
+        gm->addGameSprite(t_item, pp, GameRenderOrder::user1);
     }
     this->schedule([&](float) { addEnemy(); }, 4.5f, "addE");
 }

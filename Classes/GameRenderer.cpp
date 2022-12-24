@@ -3,12 +3,12 @@
 #include <algorithm>
 
 #include "GameDefault.h"
+#include "GameManager.h"
 #include "MyMath.h"
 #include "basic_GameSprite.h"
 using namespace std;
 
-GameRenderer* GameRenderer::create()
-{
+GameRenderer* GameRenderer::create() {
     GameRenderer* gr = new GameRenderer();
     if (gr && gr->init()) {
         gr->autorelease();
@@ -18,13 +18,12 @@ GameRenderer* GameRenderer::create()
     return nullptr;
 }
 
-bool GameRenderer::init()
-{
+bool GameRenderer::init() {
     const auto visibleSize = Director::getInstance()->getVisibleSize();
     objectRenderer = Node::create();
     finalDraw = Node::create();
     finalDraw->setAnchorPoint(Vec2(0, 0));
-    //默认1.0，缩放可以debug
+    // 默认1.0，缩放可以debug
     finalDraw->setScale(1.0f);
     lightDraw = Sprite::create();
     lightRenderTexture =
@@ -33,8 +32,8 @@ bool GameRenderer::init()
     lightDraw->setPosition(visibleSize.width / 2, visibleSize.height / 2);
     lightDraw->setScaleY(-1);
 
-    //debug 开关
-    lightDraw->setVisible(true);
+    // debug 开关
+    lightDraw->setVisible(false);
 
     finalDraw->addChild(objectRenderer, 1);
 
@@ -48,23 +47,25 @@ bool GameRenderer::init()
     return true;
 }
 
-void GameRenderer::addNode(Node* node, int zOrder)
-{
+void GameRenderer::addNode(Node* node, int zOrder) {
     objectRenderer->addChild(node, zOrder);
 }
 
 void GameRenderer::removeNode(Node* node) { objectRenderer->removeChild(node); }
 
-void GameRenderer::_update(const vector<basic_GameSprite*>& gameObjects,
-                           const Vec2& heroPosition, const Vec2& mousePosition)
-{
-    auto spriteFrame = updateLight(gameObjects);
+void GameRenderer::_update(const QuadCoor& left_top,
+                           const QuadCoor& right_bottom,
+                           const Vec2& heroPosition,
+                           const Vec2& mousePosition) {
+    auto spriteFrame = updateLight(left_top, right_bottom);
+
     lightDraw->setSpriteFrame(spriteFrame);
     lightDraw->setBlendFunc({GL_DST_COLOR, GL_ZERO});
 
-    //更新摄像机的位置
+    // 更新摄像机的位置
     const auto vs = Director::getInstance()->getVisibleSize() / 2;
-    const auto p1 = Vec2(-vs.width + mousePosition.x, -vs.height + mousePosition.y);
+    const auto p1 =
+        Vec2(-vs.width + mousePosition.x, -vs.height + mousePosition.y);
     const auto p2 = heroPosition + p1;
     const auto centerPos = MyMath::getPosOnLine(
         heroPosition, p2, MyMath::distance(heroPosition, p2) / 15);
@@ -72,7 +73,9 @@ void GameRenderer::_update(const vector<basic_GameSprite*>& gameObjects,
     const auto nowCameraPos = getGameCameraPosition();
     const auto deltaPos = cameraPosNeed - nowCameraPos;
 
-    const auto calcuSpeed = [](float x) -> float { return POT(x) / (12 * (x + 3)); };
+    const auto calcuSpeed = [](float x) -> float {
+        return POT(x) / (12 * (x + 3));
+    };
 
     const float dis = MyMath::distance(Vec2(0, 0), deltaPos);
     const float speed = calcuSpeed(dis);
@@ -81,49 +84,42 @@ void GameRenderer::_update(const vector<basic_GameSprite*>& gameObjects,
     setGameCameraPosition(nowCameraPos + movePos);
 }
 
-SpriteFrame* GameRenderer::updateLight(
-    const vector<basic_GameSprite*>& gameObjects)
-{
+SpriteFrame* GameRenderer::updateLight(const QuadCoor& left_top,
+                                       const QuadCoor& right_bottom) {
     auto& deltaPos = finalDraw->getPosition();
-    vector<vector<Sprite*>> needToRender;
-
-    const UINT number = MyTool::getMaxThreadNumber();
-    needToRender.resize(number);
+    vector<Sprite*> needToRender;
 
     const Rect screenRect(-deltaPos, MyMath::getScreenSize());
-    const auto callInTh = [&](UINT from, UINT to, UINT num) {
-        auto& v = needToRender[num];
-        for (UINT x = from; x < to; ++x) {
-            auto& gameSp = gameObjects[x];
-            auto& li = gameSp->getAllLightSprites();
+
+    auto inst = GameManager::getInstance();
+    auto& quad = inst->getAllSprites();
+
+    quad.visit_in_rect(
+        left_top, right_bottom, [&](const QuadCoor&, basic_GameSprite* sp) {
+            auto& li = sp->getAllLightSprites();
             for (auto& it : li) {
                 auto& sp = it.second;
                 if (screenRect.intersectsRect(sp->getBoundingBox())) {
-                    v.push_back(sp);
+                    needToRender.push_back(sp);
                 }
             }
-        }
-    };
-    MyTool::callInThread(gameObjects.size(), callInTh);
+        });
 
     lightRenderTexture->beginWithClear(0, 0, 0, 1);
     for (int x = 0; x < needToRender.size(); ++x) {
-        auto& v = needToRender[x];
-        for (int y = 0; y < v.size(); ++y) {
-            auto& sprite = v[y];
-            sprite->setPosition(sprite->getPosition() + deltaPos);
-            sprite->setVisible(true);
-            sprite->visit();
-            sprite->setVisible(false);
-            sprite->setPosition(sprite->getPosition() - deltaPos);
-        }
+        auto& sp = needToRender[x];
+
+        sp->setPosition(sp->getPosition() + deltaPos);
+        sp->setVisible(true);
+        sp->visit();
+        sp->setVisible(false);
+        sp->setPosition(sp->getPosition() - deltaPos);
     }
     lightRenderTexture->end();
     return lightRenderTexture->getSprite()->getSpriteFrame();
 }
 
-void GameRenderer::updateShake()
-{
+void GameRenderer::updateShake() {
     ++shakeCount;
     vector<shared_ptr<ShakeBag>> needToErase;
     Vec2 delta(0, 0);
@@ -151,32 +147,27 @@ void GameRenderer::updateShake()
     needToErase.clear();
 }
 
-void GameRenderer::setGameCameraPosition(const Vec2& position)
-{
+void GameRenderer::setGameCameraPosition(const Vec2& position) {
     finalDraw->setPosition(position);
 }
 
-const Vec2& GameRenderer::getGameCameraPosition()
-{
+const Vec2& GameRenderer::getGameCameraPosition() {
     return finalDraw->getPosition();
 }
 
-bool GameRenderer::isInCamera(const Vec2& pos)
-{
+bool GameRenderer::isInCamera(const Vec2& pos) {
     const auto p1 = -getGameCameraPosition();
     const Rect r1(p1, MyMath::getScreenSize());
     return r1.containsPoint(pos);
 }
 
-bool GameRenderer::isInCamera(const Rect& rect)
-{
+bool GameRenderer::isInCamera(const Rect& rect) {
     const auto p1 = -getGameCameraPosition();
     const Rect r1(p1, MyMath::getScreenSize());
     return r1.intersectsRect(rect);
 }
 
-void GameRenderer::shakeCamera(float angle, float amplitude, float time)
-{
+void GameRenderer::shakeCamera(float angle, float amplitude, float time) {
     constexpr float frequency = 30;
     auto shakeBag = make_shared<ShakeBag>();
 
@@ -188,8 +179,7 @@ void GameRenderer::shakeCamera(float angle, float amplitude, float time)
     shakes.push_back(shakeBag);
 }
 
-void GameRenderer::cleanup()
-{
+void GameRenderer::cleanup() {
     lightRenderTexture->release();
     Node::cleanup();
 }

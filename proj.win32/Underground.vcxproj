@@ -212,6 +212,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClInclude Include="..\Classes\Particle.h" />
     <ClInclude Include="..\Classes\PhysicsManager.h" />
     <ClInclude Include="..\Classes\PhysicsShapeCache.h" />
+    <ClInclude Include="..\Classes\QuadTree.h" />
     <ClInclude Include="..\Classes\Random.h" />
     <ClInclude Include="..\Classes\ResourcesManager.h" />
     <ClInclude Include="..\Classes\test.h" />

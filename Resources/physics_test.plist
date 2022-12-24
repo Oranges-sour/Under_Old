@@ -157,10 +157,64 @@
                 </array>
             </dict>
 
+            <key>bullet_0</key>
+            <dict>
+                <key>anchorpoint</key>
+                <string>{ 0.50000,0.50000 }</string>
+                <key>is_dynamic</key>
+                <true/>
+                <key>affected_by_gravity</key>
+                <true/>
+                <key>allows_rotation</key>
+                <true/>
+                <key>linear_damping</key>
+                <real>0</real>
+                <key>velocity_limit</key>
+                <real>1e+06</real>
+                <key>angular_damping</key>
+                <real>0</real>
+                <key>angular_velocity_limit</key>
+                <real>1e+06</real>
+                <key>fixtures</key>
+                <array>
+
+                    <dict>
+                        <key>density</key>
+                        <real>1</real>
+                        <key>restitution</key>
+                        <real>0.2</real>
+                        <key>friction</key>
+                        <real>0.7</real>
+                        <key>tag</key>
+                        <integer>0</integer>
+                        <key>group</key>
+                        <integer>0</integer>
+                        <key>category_mask</key>
+                        <integer>1</integer>
+                        <key>collision_mask</key>
+                        <integer>1</integer>
+                        <key>contact_test_mask</key>
+                        <integer>1</integer>
+                        <key>fixture_type</key>
+                        <string>CIRCLE</string>
+                        
+                        <key>circle</key>
+                        <dict>
+                            <key>radius</key>
+                            <real>4.588</real>
+                            <key>position</key>
+                            <string>{ 0.000,0.100 }</string>
+                        </dict>
+                        
+                    </dict>
+
+                </array>
+            </dict>
+
             <key>hero_0</key>
             <dict>
                 <key>anchorpoint</key>
-                <string>{ 0.49000,0.49000 }</string>
+                <string>{ 0.50000,0.50000 }</string>
                 <key>is_dynamic</key>
                 <true/>
                 <key>affected_by_gravity</key>
@@ -201,10 +255,10 @@
                         <key>polygons</key>
                         <array>
                             <array>
-                                <string>{ 50.00000,-1.00000 }</string>
-                                <string>{ -1.00000,-51.00000 }</string>
-                                <string>{ -50.00000,-1.00000 }</string>
-                                <string>{ 0.00000,51.00000 }</string>
+                                <string>{ 50.00000,50.00000 }</string>
+                                <string>{ 50.00000,-50.00000 }</string>
+                                <string>{ -50.00000,-50.00000 }</string>
+                                <string>{ -50.00000,50.00000 }</string>
                             </array>
                         </array>
                         
@@ -213,7 +267,7 @@
                 </array>
             </dict>
 
-            <key>hero_bullet</key>
+            <key>enemy_bullet_0</key>
             <dict>
                 <key>anchorpoint</key>
                 <string>{ 0.50000,0.50000 }</string>
@@ -257,115 +311,12 @@
                         <key>polygons</key>
                         <array>
                             <array>
-                                <string>{ -8.00000,0.00000 }</string>
-                                <string>{ 15.00000,-6.00000 }</string>
+                                <string>{ -5.00000,5.00000 }</string>
+                                <string>{ -2.00000,11.00000 }</string>
+                                <string>{ 2.00000,12.00000 }</string>
+                                <string>{ 5.00000,6.00000 }</string>
                                 <string>{ 5.00000,-12.00000 }</string>
-                                <string>{ -6.00000,-16.00000 }</string>
-                                <string>{ -18.00000,-16.00000 }</string>
-                            </array>
-                            <array>
-                                <string>{ -18.00000,16.00000 }</string>
-                                <string>{ -6.00000,15.00000 }</string>
-                                <string>{ -16.10000,11.50000 }</string>
-                                <string>{ -18.00000,12.00000 }</string>
-                            </array>
-                            <array>
-                                <string>{ 18.00000,-3.00000 }</string>
-                                <string>{ 15.00000,-6.00000 }</string>
-                                <string>{ -16.00000,11.00000 }</string>
-                                <string>{ -16.10000,11.50000 }</string>
-                                <string>{ -6.00000,15.00000 }</string>
-                                <string>{ 13.00000,8.00000 }</string>
-                                <string>{ 18.00000,3.00000 }</string>
-                            </array>
-                            <array>
-                                <string>{ -16.00000,11.00000 }</string>
-                                <string>{ 15.00000,-6.00000 }</string>
-                                <string>{ -8.00000,0.00000 }</string>
-                            </array>
-                        </array>
-                        
-                    </dict>
-
-                </array>
-            </dict>
-
-            <key>enemy_bullet</key>
-            <dict>
-                <key>anchorpoint</key>
-                <string>{ 0.50000,0.50000 }</string>
-                <key>is_dynamic</key>
-                <true/>
-                <key>affected_by_gravity</key>
-                <true/>
-                <key>allows_rotation</key>
-                <true/>
-                <key>linear_damping</key>
-                <real>0</real>
-                <key>velocity_limit</key>
-                <real>1e+06</real>
-                <key>angular_damping</key>
-                <real>0</real>
-                <key>angular_velocity_limit</key>
-                <real>1e+06</real>
-                <key>fixtures</key>
-                <array>
-
-                    <dict>
-                        <key>density</key>
-                        <real>1</real>
-                        <key>restitution</key>
-                        <real>0.20000000298023224</real>
-                        <key>friction</key>
-                        <real>0.699999988079071</real>
-                        <key>tag</key>
-                        <integer>0</integer>
-                        <key>group</key>
-                        <integer>0</integer>
-                        <key>category_mask</key>
-                        <integer>1</integer>
-                        <key>collision_mask</key>
-                        <integer>1</integer>
-                        <key>contact_test_mask</key>
-                        <integer>1</integer>
-                        <key>fixture_type</key>
-                        <string>POLYGON</string>
-                        
-                        <key>polygons</key>
-                        <array>
-                            <array>
-                                <string>{ 0.00000,-11.00000 }</string>
-                                <string>{ 1.00000,12.00000 }</string>
-                                <string>{ 12.00000,0.00000 }</string>
-                                <string>{ 14.00000,-5.00000 }</string>
-                                <string>{ 13.00000,-12.00000 }</string>
-                                <string>{ 7.00000,-18.00000 }</string>
-                                <string>{ 0.00000,-18.00000 }</string>
-                            </array>
-                            <array>
-                                <string>{ 12.00000,0.00000 }</string>
-                                <string>{ 1.00000,12.00000 }</string>
-                                <string>{ 11.00000,12.00000 }</string>
-                                <string>{ 15.00000,11.00000 }</string>
-                                <string>{ 18.00000,7.00000 }</string>
-                                <string>{ 18.00000,0.00000 }</string>
-                            </array>
-                            <array>
-                                <string>{ -12.00000,1.00000 }</string>
-                                <string>{ -3.00000,-13.00000 }</string>
-                                <string>{ -11.00000,-13.00000 }</string>
-                                <string>{ -17.00000,-8.00000 }</string>
-                                <string>{ -18.00000,0.00000 }</string>
-                            </array>
-                            <array>
-                                <string>{ 0.00000,18.00000 }</string>
-                                <string>{ 1.00000,17.00000 }</string>
-                                <string>{ 1.00000,12.00000 }</string>
-                                <string>{ 0.00000,-11.00000 }</string>
-                                <string>{ -3.00000,-13.00000 }</string>
-                                <string>{ -12.00000,1.00000 }</string>
-                                <string>{ -11.00000,11.00000 }</string>
-                                <string>{ -6.00000,18.00000 }</string>
+                                <string>{ -5.00000,-12.00000 }</string>
                             </array>
                         </array>
                         
@@ -418,30 +369,55 @@
                         <key>polygons</key>
                         <array>
                             <array>
-                                <string>{ 1.50000,-40.00000 }</string>
-                                <string>{ -1.50000,-40.00000 }</string>
-                                <string>{ -10.50000,-4.00000 }</string>
+                                <string>{ 3.50000,37.00000 }</string>
+                                <string>{ -26.50000,15.00000 }</string>
                                 <string>{ -1.50000,40.00000 }</string>
                                 <string>{ 2.50000,40.00000 }</string>
+                            </array>
+                            <array>
+                                <string>{ 23.50000,10.00000 }</string>
+                                <string>{ -26.50000,15.00000 }</string>
+                                <string>{ 3.50000,37.00000 }</string>
+                                <string>{ 26.50000,15.00000 }</string>
+                                <string>{ 26.50000,11.00000 }</string>
+                            </array>
+                            <array>
+                                <string>{ 20.50000,7.00000 }</string>
+                                <string>{ 23.50000,10.00000 }</string>
+                                <string>{ 23.50000,8.00000 }</string>
+                            </array>
+                            <array>
+                                <string>{ -1.50000,-40.00000 }</string>
+                                <string>{ -6.50000,-35.00000 }</string>
+                                <string>{ 5.50000,-34.00000 }</string>
+                                <string>{ 5.50000,-36.00000 }</string>
+                                <string>{ 1.50000,-40.00000 }</string>
+                            </array>
+                            <array>
+                                <string>{ -6.50000,-35.00000 }</string>
+                                <string>{ -6.50000,-33.00000 }</string>
                                 <string>{ 10.50000,-4.00000 }</string>
                                 <string>{ 10.50000,-30.00000 }</string>
+                                <string>{ 5.50000,-34.00000 }</string>
                             </array>
                             <array>
                                 <string>{ -10.50000,-4.00000 }</string>
-                                <string>{ -1.50000,-40.00000 }</string>
+                                <string>{ 10.50000,-4.00000 }</string>
+                                <string>{ -6.50000,-33.00000 }</string>
                                 <string>{ -10.50000,-30.00000 }</string>
                             </array>
                             <array>
                                 <string>{ -26.50000,15.00000 }</string>
-                                <string>{ -1.50000,40.00000 }</string>
+                                <string>{ 23.50000,10.00000 }</string>
+                                <string>{ 20.50000,7.00000 }</string>
                                 <string>{ -10.50000,-4.00000 }</string>
                                 <string>{ -26.50000,11.00000 }</string>
                             </array>
                             <array>
                                 <string>{ 10.50000,-4.00000 }</string>
-                                <string>{ 2.50000,40.00000 }</string>
-                                <string>{ 26.50000,15.00000 }</string>
-                                <string>{ 26.50000,11.00000 }</string>
+                                <string>{ -10.50000,-4.00000 }</string>
+                                <string>{ 20.50000,7.00000 }</string>
+                                <string>{ 20.50000,5.00000 }</string>
                             </array>
                         </array>
                         

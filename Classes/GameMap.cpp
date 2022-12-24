@@ -112,7 +112,9 @@ pair<bool, GameMapTile*> GameMap::findMapTile(const iVec2& from,
     return pair<bool, GameMapTile*>(false, nullptr);
 }
 
-void GameMap::_update() { updatePhysicsTile(); }
+void GameMap::_update(const QuadCoor& left_top, const QuadCoor& right_bottom) {
+    updatePhysicsTile(left_top, right_bottom);
+}
 
 const vector<basic_GameMapBuilding*>& GameMap::getMapBuildings() {
     return buildings;
@@ -212,16 +214,16 @@ void GameMap::setTilePhysicsBody(const string& physicsBody) {
     }
 }
 
-void GameMap::updatePhysicsTile() {
+void GameMap::updatePhysicsTile(const QuadCoor& left_top,
+                                const QuadCoor& right_bottom) {
     // 物理模拟会停留的帧数
     constexpr int PHYSICS_STAY_FRAMES = 20;
 
-    auto sprites = GameManager::getInstance()->getAllSprites();
-    for (auto& s : sprites) {
-        auto& a = s.second;
-        for (auto& sp : a) {
+    auto& quad = GameManager::getInstance()->getAllSprites();
+    quad.visit_in_rect(
+        left_top, right_bottom, [&](const QuadCoor&, basic_GameSprite* sp) {
             if (!sp->getPhysicsInfo().needPhysics) {
-                continue;
+                return;
             }
             const auto spriteBox = sp->getBoundingBox();
             // 获得精灵左上角坐标
@@ -246,8 +248,7 @@ void GameMap::updatePhysicsTile() {
                     }
                 }
             }
-        }
-    }
+        });
 
     // 需要从dirty中删除的
     vector<GameMapPhysicsTile*> needToErase;
