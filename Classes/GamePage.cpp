@@ -239,6 +239,8 @@ void GamePageLayer0::initRes() {
          "game_map_tile_cover2.png", "game_map_tile_cover3.png"},
         ResKey::SpFrame::GameMapCover);
     ////////////////////////////////
+    //¼ÓÔØ´¥¿Ø¸Ë
+
 
     // Ó¢ÐÛ×ÊÔ´
     rm->addSpriteFrames({"hero_0.png", "hero_center.png", "hero_out.png"},

@@ -25,7 +25,7 @@ bool GameRenderer::init()
     finalDraw = Node::create();
     finalDraw->setAnchorPoint(Vec2(0, 0));
     //默认1.0，缩放可以debug
-    finalDraw->setScale(0.1f);
+    finalDraw->setScale(1.0f);
     lightDraw = Sprite::create();
     lightRenderTexture =
         RenderTexture::create(visibleSize.width, visibleSize.height);
