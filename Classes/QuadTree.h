@@ -3,104 +3,151 @@
 
 #include <functional>
 #include <memory>
+#include <set>
+#include <string>
+
+#include "Random.h"
 
 struct QuadCoor {
     QuadCoor(int x = 0, int y = 0) : x(x), y(y) {}
     int x, y;
 };
 
+// struct QuadContainer_node {
+//     int where_idx;
+//     int where_arr;
+// };
+//
+// template <class T>
+// class QuadContainer {
+//     using Type = std::pair<bool, T>;
+//
+// public:
+//     /* n代表数组长度，生成的容器能存储的数据量保证 大于等于n
+//     default 默认值
+//     */
+//     QuadContainer(int n) {
+//         range_size = sqrt(n);
+//
+//         idx_size = n / range_size;
+//         if (n % range_size != 0) {
+//             idx_size += 1;
+//         }
+//
+//         idx = new int[idx_size];
+//         arr = new Type[idx_size * range_size];
+//
+//         for (int i = 0; i < idx_size * range_size; ++i) {
+//             arr[i].first = false;  // 默认没存
+//         }
+//
+//         for (int i = 0; i < idx_size; ++i) {
+//             idx[i] = range_size;
+//         }
+//     }
+//
+//     ~QuadContainer() {
+//         delete[] idx;
+//         delete[] arr;
+//     }
+//
+//     std::pair<bool, QuadContainer_node> store(const T &val) {
+//         QuadContainer_node result;
+//
+//         int p = -1;
+//         for (int i = 0; i < idx_size; ++i) {
+//             if (idx[i] > 0) {
+//                 p = i;
+//                 break;
+//             }
+//         }
+//
+//         if (p == -1) {
+//             return {false, result};
+//         }
+//
+//         int p1 = -1;
+//         for (int i = 0; i < range_size; ++i) {
+//             int k = p * range_size + i;
+//             if (arr[k].first == false) {
+//                 // 存进去
+//                 arr[k].first = true;
+//                 arr[k].second = val;
+//
+//                 p1 = k;
+//                 break;
+//             }
+//         }
+//         // 存了一个，计数减一
+//         idx[p] -= 1;
+//
+//         result.where_idx = p;
+//         result.where_arr = p1;
+//
+//         return {true, result};
+//     }
+//
+//     void remove(const QuadContainer_node &node) {
+//         idx[node.where_idx] += 1;
+//         arr[node.where_arr].first = false;
+//     }
+//
+// public:
+//     int idx_size;
+//     int range_size;
+//
+//     int *idx;
+//     Type *arr;
+// };
+
 struct QuadContainer_node {
-    int where_idx;
-    int where_arr;
+    std::string uid;
 };
 
 template <class T>
 class QuadContainer {
-    using Type = std::pair<bool, T>;
+    using Type = T;
 
 public:
     /* n代表数组长度，生成的容器能存储的数据量保证 大于等于n
     default 默认值
     */
-    QuadContainer(int n) {
-        range_size = sqrt(n);
+    QuadContainer(int) {}
 
-        idx_size = n / range_size;
-        if (n % range_size != 0) {
-            idx_size += 1;
-        }
-
-        idx = new int[idx_size];
-        arr = new Type[idx_size * range_size];
-
-        for (int i = 0; i < idx_size * range_size; ++i) {
-            arr[i].first = false;  // 默认没存
-        }
-
-        for (int i = 0; i < idx_size; ++i) {
-            idx[i] = range_size;
-        }
-    }
-
-    ~QuadContainer() {
-        delete[] idx;
-        delete[] arr;
-    }
+    ~QuadContainer() {}
 
     std::pair<bool, QuadContainer_node> store(const T &val) {
         QuadContainer_node result;
 
-        int p = -1;
-        for (int i = 0; i < idx_size; ++i) {
-            if (idx[i] > 0) {
-                p = i;
-                break;
-            }
+        static const char vvv[] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
+                                   'g', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
+                                   's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+
+        std::string key;
+
+        static rand_int r(0, 25);
+        for (int i = 1; i <= 6; ++i) {
+            key += vvv[r()];
         }
 
-        if (p == -1) {
-            return {false, result};
-        }
+        contain.insert({key, val});
 
-        int p1 = -1;
-        for (int i = 0; i < range_size; ++i) {
-            int k = p * range_size + i;
-            if (arr[k].first == false) {
-                // 存进去
-                arr[k].first = true;
-                arr[k].second = val;
-
-                p1 = k;
-                break;
-            }
-        }
-        // 存了一个，计数减一
-        idx[p] -= 1;
-
-        result.where_idx = p;
-        result.where_arr = p1;
+        result.uid = key;
 
         return {true, result};
     }
 
-    void remove(const QuadContainer_node &node) {
-        idx[node.where_idx] += 1;
-        arr[node.where_arr].first = false;
-    }
+    void remove(const QuadContainer_node &node) { contain.erase(node.uid); }
 
 public:
-    int idx_size;
-    int range_size;
-
-    int *idx;
-    Type *arr;
+    std::map<std::string, Type> contain;
 };
 
 template <class T>
 struct Quad_node {
-    std::pair<bool, QuadContainer_node> p;
-    std::shared_ptr<QuadContainer<T>> con;
-    QuadCoor cor;
+    std::pair<bool, QuadContainer_node> containerResult;
+    std::shared_ptr<QuadContainer<T>> container;
+    QuadCoor coor;
 };
 
 template <class T>
@@ -114,12 +161,7 @@ public:
         // 最后一层,要存节点
         if (abs(left_top.x - right_bottom.x) < 1 &&
             abs(left_top.y - right_bottom.y) < 1) {
-            if (left_top.x == 0 && right_bottom.y == 0) {
-                // 0，0位置特殊，新添加进来的都在0，0，防止炸
-                container = std::make_shared<QuadContainer<T>>(1000);
-            } else {
-                container = std::make_shared<QuadContainer<T>>(30);
-            }
+            container = std::make_shared<QuadContainer<T>>(30);
 
             _child = true;
         }
@@ -152,11 +194,8 @@ public:
         }
 
         if (_child) {
-            for (int i = 0; i < container->idx_size * container->range_size;
-                 ++i) {
-                if (container->arr[i].first) {
-                    func(this->left_top, container->arr[i].second);
-                }
+            for (auto &it : container->contain) {
+                func(left_top, it.second);
             }
         } else {
             for (int i = 1; i <= 4; ++i) {

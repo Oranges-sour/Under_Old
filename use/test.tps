@@ -239,6 +239,10 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">Res/game_map_tile_cover0.png</key>
+            <key type="filename">Res/game_map_tile_cover1.png</key>
+            <key type="filename">Res/game_map_tile_cover2.png</key>
+            <key type="filename">Res/game_map_tile_cover3.png</key>
             <key type="filename">Res/game_map_tile_dirt.png</key>
             <key type="filename">Res/game_map_tile_grass.png</key>
             <key type="filename">Res/game_map_tile_rock.png</key>
@@ -348,6 +352,21 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">Res/particle.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>1,1,3,3</rect>
+                <key>scale9Paddings</key>
+                <rect>1,1,3,3</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
         </map>
         <key>fileList</key>
         <array>
@@ -366,6 +385,11 @@
             <filename>Res/joystick_attack_disable.png</filename>
             <filename>Res/joystick_large.png</filename>
             <filename>Res/joystick_small.png</filename>
+            <filename>Res/game_map_tile_cover0.png</filename>
+            <filename>Res/game_map_tile_cover1.png</filename>
+            <filename>Res/game_map_tile_cover2.png</filename>
+            <filename>Res/game_map_tile_cover3.png</filename>
+            <filename>Res/particle.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

@@ -85,20 +85,20 @@ GameManager::mainUpdateBeforeRender(float dt) {
     auto hero_p = hero->getPosition();
     auto hero_p1 = gameMap->convertInMap(hero_p);
 
-    auto left_top = QuadCoor{hero_p1.x - 5, hero_p1.y + 5};
-    auto right_bottom = QuadCoor{hero_p1.x + 5, hero_p1.y - 5};
+    auto left_top = QuadCoor{hero_p1.x - 30, hero_p1.y + 15};
+    auto right_bottom = QuadCoor{hero_p1.x + 30, hero_p1.y - 15};
 
     vector<basic_GameSprite*> vec;
 
     gameObjects->visit_in_rect(left_top, right_bottom,
-                               [&](const QuadCoor& cor, basic_GameSprite* sp) {
+                               [&](const QuadCoor& coor, basic_GameSprite* sp) {
                                    vec.push_back(sp);
 
                                    sp->cocosScheduleUpdate(dt);
                                    sp->logicScheduleUpdate(dt);
                                });
 
-    if (hero->quad_node.p.first == true) {
+    if (hero->quad_node.containerResult.first == true) {
         vec.push_back(hero);
     }
 
@@ -106,10 +106,10 @@ GameManager::mainUpdateBeforeRender(float dt) {
         auto p = sp->getPosition();
         auto p1 = gameMap->convertInMap(p);
         auto pp = sp->quad_node;
-        auto p2 = iVec2(pp.cor.x, pp.cor.y);
+        auto p2 = iVec2(pp.coor.x, pp.coor.y);
 
         if (p1 != p2) {
-            pp.con->remove(pp.p.second);
+            pp.container->remove(pp.containerResult.second);
             sp->quad_node = gameObjects->insert({p1.x, p1.y}, sp);
         }
     }
@@ -140,8 +140,8 @@ void GameManager::mainUpdateAfterRender(float dt) {
     // ÒÆ³ý¾«Áé
     for (auto iter = needToErase.begin(); iter != needToErase.end(); ++iter) {
         auto& sp = *iter;
-        if (sp->quad_node.p.first) {
-            sp->quad_node.con->remove(sp->quad_node.p.second);
+        if (sp->quad_node.containerResult.first) {
+            sp->quad_node.container->remove(sp->quad_node.containerResult.second);
         }
 
         sp->removeFromParent();

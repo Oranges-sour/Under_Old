@@ -66,7 +66,7 @@ void MyEnemy0::runAI() {
     auto hero = m->getHero();
     auto heroPos = hero->getPosition();
     auto myPos = this->getPosition();
-    if (MyMath::distance(heroPos, myPos) < 1200) {
+    if (MyMath::distance(heroPos, myPos) < 2200) {
         if (canShoot) {
             weapon->useItem(this, myPos, heroPos, 0);
             canShoot = false;
