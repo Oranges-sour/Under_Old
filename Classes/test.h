@@ -15,10 +15,8 @@ using namespace std;
 
 class TestHero : public basic_Hero {
 public:
-    static TestHero* create(const string& hero, const string& center,
-                            const string& out);
-    virtual bool initGameSprite(const string& hero, const string& center,
-                                const string& out);
+    static TestHero* create();
+    virtual bool initGameSprite();
 
     virtual void onContact(basic_GameSprite* contactTarget) override;
     virtual void getContact(basic_GameSprite* contactTarget) override {}
@@ -28,12 +26,13 @@ public:
         return {GameSpriteType::Type0::hero, GameSpriteType::Type1::unknow};
     }
     virtual void _update();
+    void _update_action();
     virtual void attackNear(const Vec2& pos) override;
     virtual void attackFar(const Vec2& pos, float holdTime) override;
 
 private:
-    Sprite* center = nullptr;
-    Sprite* out = nullptr;
+    Sprite* hero_show = nullptr;
+    int action_cnt;
 };
 
 class TestItemSprite : public basic_GameItemSprite {

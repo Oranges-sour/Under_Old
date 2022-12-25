@@ -21,7 +21,8 @@ enum {
     Joystick_Attack_2,
     Joystick_Disable,
 
-    Hero,
+    Hero_Stay,
+    Hero_Run,
     Enemy0,
     HeroBullet,
     MapCandle,

@@ -39,7 +39,13 @@ void PhysicsManager::updatePhysics(const QuadCoor& left_top,
 
 void PhysicsManager::contactWithWall(basic_GameSprite* sprite) {
     // 使用精灵的顶点确定在地图上的四个点
+    //借助content size 获得BoundingBox
+    const auto size0 = sprite->getContentSize();
+
+    sprite->setContentSize(sprite->getPhysicsBoundingSize());
+
     auto boundingBox = sprite->getBoundingBox();
+
     // 人物在地图坐标中的4个顶点
     auto gameMap = GameManager::getInstance()->getGameMap();
     auto leftTop = gameMap->convertInMap(
@@ -117,6 +123,9 @@ void PhysicsManager::contactWithWall(basic_GameSprite* sprite) {
             speedVec.x = max<float>(0, speedVec.x - a);
         }
     }
+
+    //最后设置回去
+    sprite->setContentSize(size0);
 }
 
 Vec2 PhysicsManager::horizonMove(

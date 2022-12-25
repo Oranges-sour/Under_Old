@@ -43,8 +43,8 @@ private:
 };
 
 enum class HeroActionType {
-    LWalk,
-    RWalk,
+    LStay,
+    RStay,
     LRun,
     RRun,
 };

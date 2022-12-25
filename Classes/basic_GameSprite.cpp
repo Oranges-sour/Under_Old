@@ -64,30 +64,26 @@ void basic_GameSprite::onContact(basic_GameSprite* contactTarget) {}
 
 void basic_GameSprite::getContact(basic_GameSprite* contactFrom) {}
 
-void basic_GameSprite::kill()
-{
+void basic_GameSprite::kill() {
     GameManager::getInstance()->removeGameSprite(this);
 }
 
-GameSpriteType basic_GameSprite::getGameSpriteType()
-{
+GameSpriteType basic_GameSprite::getGameSpriteType() {
     return {GameSpriteType::Type0::unknow, GameSpriteType::Type1::unknow};
 }
 
-void basic_GameSprite::setPhysicsInfo(const GameSpritePhysicsInfo& physicsInfo)
-{
+void basic_GameSprite::setPhysicsInfo(
+    const GameSpritePhysicsInfo& physicsInfo) {
     PhysicsShapeCache::getInstance()->setBodyOnSprite(physicsInfo.physicsShape,
                                                       this);
     this->physicsInfo = physicsInfo;
 }
 
-GameSpritePhysicsInfo& basic_GameSprite::getPhysicsInfo()
-{
+GameSpritePhysicsInfo& basic_GameSprite::getPhysicsInfo() {
     return physicsInfo;
 }
 
-void basic_GameSprite::uploadPhysicsBody()
-{
+void basic_GameSprite::uploadPhysicsBody() {
     if (!physicsBody) {
         physicsBody = PhysicsShapeCache::getInstance()->createBodyWithName(
             physicsInfo.physicsShape);
@@ -99,18 +95,15 @@ void basic_GameSprite::uploadPhysicsBody()
     }
 }
 
-void basic_GameSprite::unloadPhysicsBody()
-{
+void basic_GameSprite::unloadPhysicsBody() {
     this->removeComponent(physicsBody);
 }
 
-const std::map<int, Sprite*>& basic_GameSprite::getAllLightSprites()
-{
+const std::map<int, Sprite*>& basic_GameSprite::getAllLightSprites() {
     return lightSprites;
 }
 
-Sprite* basic_GameSprite::getLightSprite(int key)
-{
+Sprite* basic_GameSprite::getLightSprite(int key) {
     auto iter = lightSprites.find(key);
     if (iter != lightSprites.end()) {
         return iter->second;
@@ -118,22 +111,19 @@ Sprite* basic_GameSprite::getLightSprite(int key)
     return nullptr;
 }
 
-void basic_GameSprite::addLightSprite(Sprite* lightSprite, int key)
-{
+void basic_GameSprite::addLightSprite(Sprite* lightSprite, int key) {
     lightSprites.insert({key, lightSprite});
     lightSprite->setVisible(false);
     this->addChild(lightSprite, -1);
 }
 
-void basic_GameSprite::removeLightSprite(int key)
-{
+void basic_GameSprite::removeLightSprite(int key) {
     auto iter = lightSprites.find(key);
     iter->second->removeFromParent();
     lightSprites.erase(iter);
 }
 
-bool basic_GameSprite::initGameSprite()
-{
+bool basic_GameSprite::initGameSprite() {
     // this->logicSchedule([&](float dt)
     //	{
     //		//buff的时间减少
@@ -155,8 +145,7 @@ bool basic_GameSprite::initGameSprite()
     return true;
 }
 
-void basic_GameSprite::cleanup()
-{
+void basic_GameSprite::cleanup() {
     for (auto& it : lightSprites) {
         it.second->removeFromParent();
     }
@@ -166,3 +155,9 @@ void basic_GameSprite::cleanup()
 
     Sprite::cleanup();
 }
+
+void basic_GameSprite::setPhysicsBoundingSize(const Size& size) {
+    physicsBoundingSize = size;
+}
+
+Size basic_GameSprite::getPhysicsBoundingSize() { return physicsBoundingSize; }

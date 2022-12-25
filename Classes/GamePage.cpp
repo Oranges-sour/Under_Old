@@ -35,7 +35,7 @@ bool GamePage::init(bool isGameScene) {
 
     auto phyw = this->getPhysicsWorld();
     phyw->setGravity(Vec2::ZERO);
-    //phyw->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+    phyw->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
     phyw->setUpdateRate(1.0);
 
     auto layer0 = GamePageLayer0::create();
@@ -175,8 +175,7 @@ void GamePageLayer0::gameInit() {
     gameMap->initMap(GameDef::GAME_MAP_SIZE_256, GameDef::GAME_MAP_SIZE_256, 64,
                      10000, "gameMapTile");
 
-    auto& frames = rm->getSpriteFrames(ResKey::SpFrame::Hero);
-    auto hero = TestHero::create(frames[0], frames[1], frames[2]);
+    auto hero = TestHero::create();
     hero->setPosition(visibleSize / 2);
     gameManager->setHero(hero);
     {
@@ -211,6 +210,7 @@ void GamePageLayer0::gameInit() {
                                       GL_REPEAT};
     mapBk->getTexture()->setTexParameters(texParams);
     mapBk->setTextureRect(Rect(0, 0, 64 * 256, 64 * 256));
+    mapBk->setVisible(false);
     this->addChild(mapBk, 0);
 
     this->schedule(
@@ -243,8 +243,11 @@ void GamePageLayer0::initRes() {
     // ¼ÓÔØ´¥¿Ø¸Ë
 
     // Ó¢ÐÛ×ÊÔ´
-    rm->addSpriteFrames({"hero_0.png", "hero_0.png", "hero_0.png"},
-                        ResKey::SpFrame::Hero);
+    rm->addSpriteFrames({"man_stay.png"}, ResKey::SpFrame::Hero_Stay);
+    rm->addSpriteFrames(
+        {"man_run_1.png", "man_run_2.png", "man_run_3.png", "man_run_4.png"},
+        ResKey::SpFrame::Hero_Run);
+
     rm->addSpriteFrames({"hero_bullet.png"}, ResKey::SpFrame::HeroBullet);
     rm->addSpriteFrames({"item_0.png"}, ResKey::SpFrame::Item0);
 
@@ -263,7 +266,7 @@ void GamePageLayer0::initRes() {
     rm->addPhysicsBody("enemy_0", ResKey::Physics::Enemy0);
     rm->addPhysicsBody("enemy_bullet_0", ResKey::Physics::Enemy0Bullet);
     rm->addPhysicsBody("gameMapTile", ResKey::Physics::GameMapTile);
-    rm->addPhysicsBody("hero_0", ResKey::Physics::Hero);
+    rm->addPhysicsBody("man_stay", ResKey::Physics::Hero);
     rm->addPhysicsBody("item_0", ResKey::Physics::Item0);
     rm->addPhysicsBody("bullet_0", ResKey::Physics::HeroBullet);
 

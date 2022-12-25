@@ -175,7 +175,7 @@
             <key>defaultPivotPoint</key>
             <point_f>0.5,0.5</point_f>
             <key>writePivotPoints</key>
-            <false/>
+            <true/>
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
@@ -352,6 +352,67 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">Res/man_run_1.png</key>
+            <key type="filename">Res/man_run_2.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.7</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>28,45,57,90</rect>
+                <key>scale9Paddings</key>
+                <rect>28,45,57,90</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">Res/man_run_3.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.7</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>28,47,57,95</rect>
+                <key>scale9Paddings</key>
+                <rect>28,47,57,95</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">Res/man_run_4.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.7</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>37,47,73,95</rect>
+                <key>scale9Paddings</key>
+                <rect>37,47,73,95</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">Res/man_stay.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.7</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>20,45,40,90</rect>
+                <key>scale9Paddings</key>
+                <rect>20,45,40,90</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">Res/particle.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -390,6 +451,11 @@
             <filename>Res/game_map_tile_cover2.png</filename>
             <filename>Res/game_map_tile_cover3.png</filename>
             <filename>Res/particle.png</filename>
+            <filename>Res/man_run_1.png</filename>
+            <filename>Res/man_run_2.png</filename>
+            <filename>Res/man_run_3.png</filename>
+            <filename>Res/man_run_4.png</filename>
+            <filename>Res/man_stay.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

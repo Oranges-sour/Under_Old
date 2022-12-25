@@ -55,6 +55,8 @@ void MyEnemy0::kill() {
 }
 
 void MyEnemy0::_update() {
+    this->setPhysicsBoundingSize(this->getContentSize());
+
     runAI();
     if (getHitPoint() <= 0) {
         kill();

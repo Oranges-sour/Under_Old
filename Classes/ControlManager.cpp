@@ -104,11 +104,19 @@ void ControlManager::_update()
 
 void ControlManager::keyDown(EventKeyboard::KeyCode key)
 {
+    auto gm = GameManager::getInstance();
+    auto gr = gm->getGameRenderer();
+    auto hero = gm->getHero();
+
     switch (key) {
         case EventKeyboard::KeyCode::KEY_A: {
+            hero->setActionType(HeroActionType::LRun);
+
             moveVec.x -= 1;
         } break;
         case EventKeyboard::KeyCode::KEY_D: {
+            hero->setActionType(HeroActionType::RRun);
+
             moveVec.x += 1;
         } break;
         case EventKeyboard::KeyCode::KEY_SHIFT: {
@@ -126,11 +134,19 @@ void ControlManager::keyDown(EventKeyboard::KeyCode key)
 
 void ControlManager::keyUp(EventKeyboard::KeyCode key)
 {
+    auto gm = GameManager::getInstance();
+    auto gr = gm->getGameRenderer();
+    auto hero = gm->getHero();
+
     switch (key) {
         case EventKeyboard::KeyCode::KEY_A: {
+            hero->setActionType(HeroActionType::LStay);
+
             moveVec.x += 1;
         } break;
         case EventKeyboard::KeyCode::KEY_D: {
+            hero->setActionType(HeroActionType::RStay);
+
             moveVec.x -= 1;
         } break;
         case EventKeyboard::KeyCode::KEY_SHIFT: {

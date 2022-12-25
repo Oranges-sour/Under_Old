@@ -7,10 +7,9 @@
 #include "Random.h"
 #include "ResourcesManager.h"
 
-TestHero* TestHero::create(const string& hero, const string& center,
-                           const string& out) {
+TestHero* TestHero::create() {
     auto h = new (std::nothrow) TestHero();
-    if (h && h->initGameSprite(hero, center, out)) {
+    if (h && h->initGameSprite()) {
         h->autorelease();
         return h;
     }
@@ -18,16 +17,26 @@ TestHero* TestHero::create(const string& hero, const string& center,
     return nullptr;
 }
 
-bool TestHero::initGameSprite(const string& hero, const string& center,
-                              const string& out) {
-    this->cocosSchedule([&](float) { this->_update(); }, "__update");
-    basic_Hero::initGameSprite();
-    this->center = Sprite::createWithSpriteFrameName(center);
-    this->out = Sprite::createWithSpriteFrameName(out);
+bool TestHero::initGameSprite() {
+    hero_show = Sprite::create();
+    hero_show->setAnchorPoint(Vec2(0, 0));
+    hero_show->setPosition(80, 0);
+    this->addChild(hero_show, 1);
 
-    this->addChild(this->center, 1);
-    this->addChild(this->out, 2);
-    return this->initWithSpriteFrameName(hero);
+    this->cocosSchedule([&](float) { this->_update(); }, "__update");
+
+    this->cocosSchedule([&](float) { this->_update_action(); }, 0.1,
+                        "__update_action");
+
+    this->setPhysicsBoundingSize(Size(80, 180));
+
+    basic_Hero::initGameSprite();
+
+    auto gm = GameManager::getInstance();
+    auto rm = gm->getResourcesManager();
+
+    auto f = rm->getSpriteFrames(ResKey::SpFrame::Hero_Stay)[0];
+    return this->initWithSpriteFrameName(f);
 }
 
 void TestHero::onContact(basic_GameSprite* contactTarget) {
@@ -39,8 +48,39 @@ void TestHero::_update() {
     for (auto& it : lights) {
         it.second->setPosition(this->getPosition());
     }
-    center->setPosition(getContentSize() / 2);
-    out->setPosition(getContentSize() / 2);
+
+    // hero_show->setPosition(this->getPosition());
+}
+
+void TestHero::_update_action() {
+    action_cnt += 1;
+
+    auto gm = GameManager::getInstance();
+    auto rm = gm->getResourcesManager();
+
+    const auto ss = this->getActionType();
+    if (ss == HeroActionType::LStay) {
+        auto f = rm->getSpriteFrames(ResKey::SpFrame::Hero_Stay)[0];
+        hero_show->setSpriteFrame(f);
+        hero_show->setScaleX(-1);
+    }
+    if (ss == HeroActionType::RStay) {
+        auto f = rm->getSpriteFrames(ResKey::SpFrame::Hero_Stay)[0];
+        hero_show->setSpriteFrame(f);
+        hero_show->setScaleX(1);
+    }
+
+    if (ss == HeroActionType::LRun) {
+        auto f = rm->getSpriteFrames(ResKey::SpFrame::Hero_Run)[action_cnt % 4];
+        hero_show->setSpriteFrame(f);
+        hero_show->setScaleX(-1);
+    }
+
+    if (ss == HeroActionType::RRun) {
+        auto f = rm->getSpriteFrames(ResKey::SpFrame::Hero_Run)[action_cnt % 4];
+        hero_show->setSpriteFrame(f);
+        hero_show->setScaleX(1);
+    }
 }
 
 void TestHero::attackNear(const Vec2& pos) {}

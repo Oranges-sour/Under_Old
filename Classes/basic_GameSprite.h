@@ -182,6 +182,20 @@ public:
      *@return 无
      */
     virtual void cleanup() override;
+    
+     /**
+     *设置物理碰撞箱大小
+     *@param 大小
+     *@return 无
+     */
+    virtual void setPhysicsBoundingSize(const Size& size);
+
+     /**
+     *获得物理碰撞箱大小
+     *@param 无
+     *@return 大小
+     */
+    virtual Size getPhysicsBoundingSize();
 
 public:
     //每一帧的运动矢量(当前帧过后就会被清除)
@@ -194,6 +208,8 @@ public:
     Quad_node<basic_GameSprite*> quad_node;
 
 private:
+    Size physicsBoundingSize;
+
     // buff的种类与时间的映射表
     // std::map<GameObjectBuffType, float> buffs;
 
